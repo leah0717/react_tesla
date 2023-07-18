@@ -1,11 +1,33 @@
 const path = require('path')
 const CracoLessPlugin = require('craco-less')
-// const { whenProd } = require("@craco/craco");
 const resolve = (pathname) => path.resolve(__dirname, pathname)
 module.exports = {
+  // babel: {
+  //   // 配置样式按需引入
+  //   plugins: [
+  //     [
+  //       'import',
+  //       {
+  //         libraryName: 'antd',
+  //         libraryDirectory: 'es',
+  //         style: true
+  //       }
+  //     ]
+  //   ]
+  // },
   plugins: [
     {
       plugin: CracoLessPlugin
+      // options: {
+      //   lessLoaderOptions: {
+      //     lessOptions: {
+      //       modifyVars: {
+      //         '@primary-color': '#1890ff' // 修改主题色
+      //       },
+      //       javascriptEnabled: true
+      //     }
+      //   }
+      // }
     }
   ],
   webpack: {
@@ -15,13 +37,4 @@ module.exports = {
       utils: resolve('src/utils')
     }
   }
-  // devServer:{
-  //   proxy:{
-  //     '/api':{
-  //       target:'https://music.163.com',
-  //       changeOrigin: true,
-  //       secure:false
-  //     }
-  //   }
-  // }
 }
