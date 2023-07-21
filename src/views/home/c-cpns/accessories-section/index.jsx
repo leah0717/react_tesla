@@ -6,11 +6,11 @@ import Accessories from '@/assets/img/accessories.avif'
 const AccessoriesSection = memo((props) => {
   const footerContent = (
     <a
-      className="box-content border-[3px] border-transparent bg-black bg-opacity-60 backdrop-blur-sm text-sm rounded h-[26px] w-[210px]
+      className="box-content border-[3px] border-transparent bg-black bg-opacity-80 backdrop-blur-sm text-sm rounded h-[26px] w-[210px]
       leading-[26px] font-medium text-white px-6 py-1 inline-block"
       href="#"
     >
-      预约试驾
+      立即购买
     </a>
   )
 

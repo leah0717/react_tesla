@@ -28,6 +28,7 @@ const PowerWallSection = memo((props) => {
     <Section
       title="太阳能设备和 Powerwall"
       subtitle="全方位能源供应"
+      showUnderLine={true}
       color="black"
       footer={footerContent}
       background={pictureBackground}

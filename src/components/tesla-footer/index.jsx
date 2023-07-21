@@ -4,11 +4,15 @@ export default class index extends PureComponent {
   render() {
     return (
       <footer
-        className="py-3 px-10 flex justify-center items-center absolute bottom-0 w-full z-40 text-gray-600 text-xs font-medium"
+        className="py-3 px-10 text-center smtop:absolute smtop:bottom-0 w-full z-40
+        text-gray-600 text-xs font-medium"
         id="landing-footer"
       >
         <nav>
-          <ul className="flex [&>li>a]:inline-block [&>li>a]:px-2 [&>li>a]:py-2">
+          <ul
+            className="smtop:[&>li]:inline-block smtop:[&>li>a]:inline-block smtop:[&>li>a]:px-2 smtop:[&>li>a]:py-2
+          [&>li]:mb-2 text-center text-xs smtop:[&>li]:mb-0 font-normal"
+          >
             <li>
               <a href="#">Tesla © 2023</a>
             </li>

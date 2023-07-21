@@ -1,33 +1,57 @@
-import React, { memo, useRef, useEffect } from 'react'
+import React, { memo, useRef, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import classnames from 'classnames'
 import { HeaderWrapper } from './style'
 
 import StickyHeader from '../sticky-header'
 import IconLogo from '@/assets/svg/icon-logo'
-const TeslaHeader = memo(() => {
+const TeslaHeader = memo(({ onButtonClick }) => {
   const headerEl = useRef(null)
 
   const listItemRef = useRef([])
   const menuBackDropRef = useRef(null)
+
+  const [isExpanded, setIsExpanded] = useState(false)
   useEffect(() => {
-    // 改变头部颜色
+    // 改变头部字体颜色
     const observerOptions = {
       root: null,
       rootMargin: '0px',
       threshold: 0.9
     }
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        // console.log(entry)
-        const { isIntersecting, target } = entry
-        if (isIntersecting) {
-          const color = target.getAttribute('data-header-color')
+      if (Array.isArray(entries)) {
+        const entry = entries.find((entry) => entry.isIntersecting)
+        if (entry) {
+          const color = entry.target.getAttribute('data-header-color')
           headerEl.current.style.color = color
         }
-      })
+      } else {
+        console.error('Invalid entries:', entries)
+      }
     }, observerOptions)
 
     const sectionElements = document.querySelectorAll('.landing-section')
-    sectionElements.forEach((section) => observer.observe(section))
+    if (sectionElements && sectionElements.length > 0) {
+      // console.log(`sectionElements====`, sectionElements)
+      Array.from(sectionElements).forEach((section) =>
+        observer.observe(section)
+      )
+    } else {
+      console.error('No landing sections found')
+    }
+
+    // nav透明度
+    // 延迟一段时间后将透明度设置为 1
+    const timeoutId = setTimeout(() => {
+      const navEl = document.querySelectorAll('header nav')
+      if (navEl && Array.from(navEl).length > 0) {
+        // console.log(`navEl====`, Array.from(navEl))
+        Array.from(navEl).forEach((item) => {
+          item.style.opacity = '1'
+        })
+      }
+    }, 800)
     // nav导航动画
     const listItemElements = document.querySelectorAll('#landing-header li')
     const menuBackDropElement = document.querySelector('#menu-backdrop')
@@ -39,7 +63,10 @@ const TeslaHeader = memo(() => {
       item.addEventListener('mouseenter', handleMouseEnter)
       item.addEventListener('mouseleave', handleMouseLeave)
     })
-
+    // 推出效果
+    const timeoutId2 = setTimeout(() => {
+      setIsExpanded(true)
+    }, 1500) // 设置适当的延时值
     return () => {
       // 清理观察器
       sectionElements.forEach((section) => observer.unobserve(section))
@@ -48,14 +75,23 @@ const TeslaHeader = memo(() => {
         item.removeEventListener('mouseenter', handleMouseEnter)
         item.removeEventListener('mouseleave', handleMouseLeave)
       })
+      // 清理定时器
+      clearTimeout(timeoutId)
+      clearTimeout(timeoutId2)
     }
   }, [])
+  const handleNavClick = (event) => {
+    event.preventDefault()
+    onButtonClick('信息传递给父组件')
+  }
   const handleMouseEnter = (event) => {
     const { left, top, width, height } = event.target.getBoundingClientRect()
     const menuBackDrop = menuBackDropRef.current
     menuBackDrop.style.setProperty('--left', `${left}px`)
-    menuBackDrop.style.setProperty('--top', `${top - 52}px`)
-    // menuBackDrop.style.setProperty('--top', `${top}px`)
+    menuBackDrop.style.setProperty(
+      '--top',
+      isExpanded ? '0px' : `${top - 52}px`
+    )
     menuBackDrop.style.setProperty('--width', `${width}px`)
     menuBackDrop.style.setProperty('--height', `${height}px`)
 
@@ -69,45 +105,44 @@ const TeslaHeader = memo(() => {
     menuBackDrop.style.opacity = '0'
     menuBackDrop.style.visibility = 'hidden'
   }
+
+  const menuItems = [
+    { href: '#model-s', text: 'Model S' },
+    { href: '#model-3', text: 'Model 3' },
+    { href: '#model-x', text: 'Model X' },
+    { href: '#model-y', text: 'Model Y' },
+    { href: '#powerwall', text: 'Cybertruck' },
+    { href: '#accesorios', text: 'Powerwall' }
+  ]
   return (
     <HeaderWrapper>
-      <StickyHeader />
+      <StickyHeader isExpanded={isExpanded} />
       <header
         id="landing-header"
         ref={headerEl}
-        className="px-8 py-3 flex items-center fixed w-full justify-between z-40 text-white h-14 top-[52px]"
+        className={classnames(
+          'px-2 smtop:px-8 py-3 flex items-center fixed w-full justify-between z-40 text-white h-14 top-0 transition-all duration-500',
+          { 'top-[68px] smtop:top-[52px]': isExpanded }
+        )}
       >
         <div className="flex flex-grow basis-0 [&>a]:inline-block [&>a]:px-4">
           <a href="/">
             <IconLogo />
           </a>
         </div>
-        <nav className="hidden desktop:block">
+        <nav className="hidden desktop:block opacity-0 transition-opacity duration-500">
           <ul
             className="flex text-sm [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:text-current
                       [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
           >
-            <li>
-              <a href="#model-s">Model S</a>
-            </li>
-            <li>
-              <a href="#model-3">Model 3</a>
-            </li>
-            <li>
-              <a href="#model-x">Model X</a>
-            </li>
-            <li>
-              <a href="#model-y">Model Y</a>
-            </li>
-            <li>
-              <a href="#powerwall">Cybertruck</a>
-            </li>
-            <li>
-              <a href="#accesorios">Powerwall</a>
-            </li>
+            {menuItems.map((item, index) => (
+              <li key={index}>
+                <a href={item.href}>{item.text}</a>
+              </li>
+            ))}
           </ul>
         </nav>
-        <nav className="flex flex-grow justify-end basis-0">
+        <nav className="flex flex-grow justify-end basis-0 opacity-0 transition-opacity duration-500">
           <ul
             className="flex text-sm [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:text-current
                       [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2"
@@ -119,7 +154,9 @@ const TeslaHeader = memo(() => {
               <a href="#">账户</a>
             </li>
             <li>
-              <a href="#">导航栏</a>
+              <a href="#" onClick={handleNavClick}>
+                导航栏
+              </a>
             </li>
           </ul>
         </nav>
@@ -138,5 +175,7 @@ const TeslaHeader = memo(() => {
     </HeaderWrapper>
   )
 })
-
+TeslaHeader.propTypes = {
+  onButtonClick: PropTypes.func
+}
 export default TeslaHeader

@@ -5,10 +5,10 @@ import Section from '@/components/section'
 import Modelthree from '@/assets/img/model-3.avif'
 const ModelThreeSection = memo((props) => {
   const footerContent = (
-    <div className="gap-x-6 flex mx-auto justify-center">
+    <div className="gap-x-6 flex flex-col smtop:flex-row mx-auto justify-center items-center">
       <a
         className="box-content h-[26px] w-[210px] border-[3px] border-transparent bg-black bg-opacity-60 text-sm rounded font-medium
-        text-white px-6 py-1 inline-flex justify-center items-center"
+        text-white px-6 py-1 inline-flex justify-center items-center mb-4 smtop:mb-0"
         href="#"
       >
         定制我的Model 3
@@ -37,6 +37,7 @@ const ModelThreeSection = memo((props) => {
       subtitle="了解更多"
       color="black"
       id="model-3"
+      showUnderLine={true}
       footer={footerContent}
       background={pictureBackground}
     ></Section>
